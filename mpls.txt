@@ -1,0 +1,73 @@
+عنوان ال LAN هو 192.168.2.2/24
+عنوان الWan هو 192.168.3.1/24
+عتوان الBridge الأول هو 4.4.4.4
+عنوان ال IP لل Ether1 لل PE1-CE1 هو 192.168.3.2/24
+عنوان الIP للEather2 لل PE1-P هو 192.168.4.1/24
+
+عنوان الBridge هو 2.2.2.2
+عنوان ال IP للشبكة Ether1 لل PE1-P هي 192.168.4.2/24
+عنوان الIP للشبكة لل eather2 لل Pe1-P هي 192.168.5.1/24
+
+من الP-PE2 عنوان الEather1 iهو 192.168.5.2
+من p-pe2 عنوان الEather2 هو 192.168.6.1
+والBridge هو 3.3.3.3
+
+                                                                ********************************************
+خطوات تهيئة MPLS على الMikrotic:
+
+1- على الواجهة تفعيل الMPLS
+/interface mpls-te
+set enabled=yes
+
+2- إنشاء على الواجهات الLable Switching:
+/interface mpls-te interface
+add interface=ether1
+add interface=ether2
+حيث نقوم بإستبدال الeather1,eather2 بأسماء الواجهات
+
+3- تمكين MPLS Forwarding 
+/mpls ldp
+set enabled=yes
+/mpls ldp interface
+add interface=ether1
+add interface=ether2
+
+4- تهيئة الLDP (Label Disterbution Protocol)  هذا البروتوكول الذي يوزع ال (Labels) على أجهزة الMPLS
+
+أ- على الواجهات تمكين الLDP
+/mpls ldp interface
+add interface=ether1
+add interface=ether2
+
+ب- على الراوتر يتم تعين الRouter ID
+/mpls ldp
+set enabled=yes router-id=1.1.1.1
+
+5- إنشاء الMPLS في المسار التي تسير فيه حزم ال Lsp
+
+أ-إنشاء مسار ثابت لل (Static LSP) عن طريق
+/mpls static
+add in-label=100 out-label=200 next-hop=192.168.1.2
+
+in-label: العلامة الواردة.
+
+out-label: العلامة الصادرة.
+
+next-hop: عنوان IP للقفزة التالية.
+
+ب- إنشاء مسار ديناميكي وذلك عن طريق الLDP.
+
+6- التحقق من العمل: 
+أ- عرض جلسات الLDP
+
+/mpls ldp session print
+
+ب- عرض الlable المعينة 
+/mpls forwarding-table print
+
+
+
+
+
+
+
